@@ -1,0 +1,34 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+
+table.center{
+  margin: 10px auto;
+}
+
+.previewComponent{
+  margin: 20px auto;
+}
+
+.reactable-data tr:hover{
+    background-color: #deb187;
+}
+
+tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+th {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+td, th {
+    padding: 6px;
+    text-align: left;
+}
