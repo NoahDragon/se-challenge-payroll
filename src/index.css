@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+ul li {
+    display: inline;
+}
+
+#tab { 
+    display:inline-block; 
+    margin-left: 40px; 
+}

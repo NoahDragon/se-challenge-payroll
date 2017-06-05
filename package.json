@@ -1,0 +1,35 @@
+{
+  "name": "wave-payroll",
+  "version": "1.0.0",
+  "description": "An interview chanllenge for Wave interview",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoahDragon/se-challenge-payroll.git"
+  },
+  "keywords": [
+    "wave",
+    "payroll"
+  ],
+  "author": "HC",
+  "license": "BSD-4-Clause",
+  "bugs": {
+    "url": "https://github.com/NoahDragon/se-challenge-payroll/issues"
+  },
+  "homepage": "https://github.com/NoahDragon/se-challenge-payroll#readme",
+  "dependencies": {
+    "csv-parse": "^1.2.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "warehouse": "^2.2.0"
+  },
+  "devDependencies": {
+    "react-scripts": "^1.0.7"
+  }
+}
