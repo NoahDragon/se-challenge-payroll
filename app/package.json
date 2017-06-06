@@ -9,10 +9,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NoahDragon/se-challenge-payroll.git"
-  },
   "keywords": [
     "wave",
     "payroll"
@@ -25,10 +21,11 @@
   "homepage": "https://github.com/NoahDragon/se-challenge-payroll#readme",
   "dependencies": {
     "csv-parse": "^1.2.0",
+    "moment": "^2.18.1",
+    "node-fetch": "^1.7.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "reactable": "^0.14.1",
-    "warehouse": "^2.2.0"
+    "reactable": "^0.14.1"
   },
   "devDependencies": {
     "react-scripts": "^1.0.7"

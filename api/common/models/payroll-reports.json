@@ -1,0 +1,35 @@
+{
+  "name": "PayrollReports",
+  "plural": "PayrollReports",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "ID": {
+      "type": "number",
+      "required": true
+    },
+    "Date": {
+      "type": "date",
+      "required": true
+    },
+    "WorkedHours": {
+      "type": "number",
+      "required": true
+    },
+    "EmployeeID": {
+      "type": "number",
+      "required": true
+    },
+    "JobGroup": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import parse from 'csv-parse';
 import { Table } from 'reactable';
+import fetch from 'node-fetch';
+import moment from 'moment';
 import './App.css';
 
 class FileUpload extends React.Component {
@@ -11,6 +13,18 @@ class FileUpload extends React.Component {
 
   _handleSubmit(e) {
     e.preventDefault();
+    fetch('http://localhost:8080/api/PayrollReports', { 
+      method: 'POST', 
+      body: JSON.stringify({
+          ID: this.state.report_id,
+          Date: moment(this.state.rows[0]["date"], 'DD/MM/YYYY').toDate(),
+          WorkedHours: this.state.rows[0]["hours worked"],
+          EmployeeID: this.state.rows[0]["employee id"],
+          JobGroup: this.state.rows[0]["job group"]
+      })
+    }).then(res => res.json)
+      .then(json => console.log(json));
+
     console.log('handle uploading-', this.state.file.name, 'report id:', this.state.report_id['hours worked']);
   }
 
@@ -33,7 +47,7 @@ class FileUpload extends React.Component {
           this.setState({
             file: file,
             rows: rs,
-            report_id: ri
+            report_id: ri['hours worked']
           });
         });
       }
@@ -48,7 +62,7 @@ class FileUpload extends React.Component {
     let $report_id;
 
     if (report_id){
-      $report_id = (<span> Report ID {report_id['hours worked']} </span>);
+      $report_id = (<span> Report ID {report_id} </span>);
     } else {
       $report_id = null;
     }
@@ -84,6 +98,9 @@ class App extends Component {
           <h2>Welcome to Wave Payroll Viewer</h2>
         </div>
         <FileUpload />
+        <div className="footer">
+          This a simulate APP created for <a href="https://github.com/wvchallenges/se-challenge-payroll"><strong>Wave Code Challenge</strong></a> by Haochen Zhou. 
+        </div>
       </div>
     );
   }
