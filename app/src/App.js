@@ -13,18 +13,23 @@ class FileUpload extends React.Component {
 
   _handleSubmit(e) {
     e.preventDefault();
-    fetch('http://localhost:8080/api/PayrollReports', { 
-      method: 'POST', 
-      body: JSON.stringify({
-          ID: this.state.report_id,
-          Date: moment(this.state.rows[0]["date"], 'DD/MM/YYYY').toDate(),
-          WorkedHours: this.state.rows[0]["hours worked"],
-          EmployeeID: this.state.rows[0]["employee id"],
-          JobGroup: this.state.rows[0]["job group"]
-      })
-    }).then(res => res.json)
-      .then(json => console.log(json));
 
+    for(let i in this.state.rows){
+      fetch('http://localhost:8080/api/PayrollReports', { 
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+          },
+        body: JSON.stringify({
+            ID: this.state.report_id,
+            Date: moment(this.state.rows[i]["date"], 'DD/MM/YYYY').toDate(),
+            WorkedHours: this.state.rows[i]["hours worked"],
+            EmployeeID: this.state.rows[i]["employee id"],
+            JobGroup: this.state.rows[i]["job group"]
+        })
+      }).then(res => console.log(res));
+    }
     console.log('handle uploading-', this.state.file.name, 'report id:', this.state.report_id['hours worked']);
   }
 
@@ -99,7 +104,7 @@ class App extends Component {
         </div>
         <FileUpload />
         <div className="footer">
-          This a simulate APP created for <a href="https://github.com/wvchallenges/se-challenge-payroll"><strong>Wave Code Challenge</strong></a> by Haochen Zhou. 
+          This a simulate APP created for <a href="https://github.com/wvchallenges/se-challenge-payroll"><strong>Wave Code Challenge</strong></a> by HC. 
         </div>
       </div>
     );
