@@ -1,35 +1,31 @@
 import React, { Component } from 'react';
 import parse from 'csv-parse';
 import { Table } from 'reactable';
-import fetch from 'node-fetch';
 import moment from 'moment';
+import * as api from './scripts/api.js';
 import './App.css';
 
 class FileUpload extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {file: '', rows: {}, report_id: ''};
+    this.state = {file: '', rows: {}, report_id: '', err: null};
   }
 
   _handleSubmit(e) {
     e.preventDefault();
 
-    for(let i in this.state.rows){
-      fetch('http://localhost:8080/api/PayrollReports', { 
-        method: 'POST', 
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-          },
-        body: JSON.stringify({
-            ID: this.state.report_id,
-            Date: moment(this.state.rows[i]["date"], 'DD/MM/YYYY').toDate(),
-            WorkedHours: this.state.rows[i]["hours worked"],
-            EmployeeID: this.state.rows[i]["employee id"],
-            JobGroup: this.state.rows[i]["job group"]
-        })
-      }).then(res => console.log(res));
+    if(this.state.err)
+      return;
+
+    if(!this.state.file){
+      this.setState({
+        err: 'Please select a file to upload.'
+      });
+      return;
     }
+
+    api.bulkPOST(this.state.rows);
+
     console.log('handle uploading-', this.state.file.name, 'report id:', this.state.report_id['hours worked']);
   }
 
@@ -43,8 +39,24 @@ class FileUpload extends React.Component {
       reader.onloadend = () => {
         let rs = {};
         let ri = {};
-        
-        parse(reader.result, {delimiter: ',', columns: true}, (err, output) => {
+
+        parse(reader.result, {
+            from: 2,        // skip header line.
+            delimiter: ',', 
+            columns: [
+              'Date',
+              'WorkedHours',
+              'EmployeeID',
+              'JobGroup'
+            ]
+          }, (err, output) => {
+          if (err){
+            this.setState({
+              err: file.name + ' ' + err.toString()
+            });
+            return;
+          }
+
           rs = output; 
           ri = rs[rs.length - 1];   // get the report id row.
           delete rs[rs.length - 1]; // remove the report id row.
@@ -52,7 +64,8 @@ class FileUpload extends React.Component {
           this.setState({
             file: file,
             rows: rs,
-            report_id: ri['hours worked']
+            report_id: ri['WorkedHours'],
+            err: null
           });
         });
       }
@@ -62,14 +75,16 @@ class FileUpload extends React.Component {
   }
 
   render() {
-    let {rows, report_id} = this.state;
+    let {rows, report_id, err} = this.state;
     let $tableList = [];
-    let $report_id;
+    let $report_id, $err;
 
     if (report_id){
       $report_id = (<span> Report ID {report_id} </span>);
-    } else {
-      $report_id = null;
+    }
+
+    if (err){
+      $err = (<p><span className="error">{err}</span> </p>);
     }
 
     $tableList = Object.keys(rows).map(key => {
@@ -86,8 +101,9 @@ class FileUpload extends React.Component {
             type="submit" 
             onClick={(e)=>this._handleSubmit(e)}>Upload File</button>
         </form>
+        {$err}
         <div className="App-list">
-          <Table className="center" data={$tableList} sortable={true} filterable={['employee id']}/>
+          <Table className="center" data={$tableList} sortable={true} filterable={['EmployeeID']}/>
         </div>
         {$report_id}
       </div>

@@ -22,10 +22,10 @@
   "dependencies": {
     "csv-parse": "^1.2.0",
     "moment": "^2.18.1",
-    "node-fetch": "^1.7.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "reactable": "^0.14.1"
+    "reactable": "^0.14.1",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "react-scripts": "^1.0.7"

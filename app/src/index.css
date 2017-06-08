@@ -52,5 +52,17 @@ td, th {
 }
 
 .footer a {
-    color: #87ceeb;
+  color: #87ceeb;
+}
+
+.error {
+  color: #f00;
+}
+
+.circle {
+  background: #f00;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px; 
+  /* width and height can be anything, as long as they're equal */
 }
