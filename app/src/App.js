@@ -39,9 +39,10 @@ class FileUpload extends React.Component {
         err: 'The same report ID has been uploaded.'
       })
     }, () => {
-      api.bulkPOST(this.state.rows);
+      api.bulkPOST(this.state.rows, () => {
+        this._loadData();
+      });
       console.log('handle uploading-', this.state.file.name, 'report id:', this.state.report_id);
-      this._loadData();
     });
   }
 

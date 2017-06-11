@@ -52,10 +52,11 @@ function _payrollReportPOST(json){
  *
  * @param {Object} obj
  */
-export function bulkPOST(obj){
+export function bulkPOST(obj, callback){
     for (let i in obj){
         _payrollReportPOST(JSON.stringify(obj[i]));
     }
+    callback();
 }
 
 export var isServerOnline = false
