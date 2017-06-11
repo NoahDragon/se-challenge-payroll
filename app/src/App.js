@@ -3,12 +3,22 @@ import parse from 'csv-parse';
 import { Table } from 'reactable';
 import moment from 'moment';
 import * as api from './scripts/api.js';
+import * as br from './scripts/business_rules.js';
 import './App.css';
 
 class FileUpload extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {file: '', rows: {}, report_id: '', err: null};
+    this.state = {file: '', rows: {}, report_id: '', err: null, table_list: []};
+    this._loadData();
+  }
+
+  _loadData(){
+    api.loadPayroll(0, 0, res => {
+      this.setState({
+        table_list: br.generatePayrolls(res)
+      })
+    });
   }
 
   _handleSubmit(e) {
@@ -24,9 +34,15 @@ class FileUpload extends React.Component {
       return;
     }
 
-    api.bulkPOST(this.state.rows);
-
-    console.log('handle uploading-', this.state.file.name, 'report id:', this.state.report_id['hours worked']);
+    api.checkReportIDExists(this.state.report_id, () => {
+      this.setState({
+        err: 'The same report ID has been uploaded.'
+      })
+    }, () => {
+      api.bulkPOST(this.state.rows);
+      console.log('handle uploading-', this.state.file.name, 'report id:', this.state.report_id);
+      this._loadData();
+    });
   }
 
   _handleFileChange(e) {
@@ -37,8 +53,8 @@ class FileUpload extends React.Component {
 
     if (file){
       reader.onloadend = () => {
-        let rs = {};
-        let ri = {};
+        let rs = {}; // report rows.
+        let ri = {}; // report id row.
 
         parse(reader.result, {
             from: 2,        // skip header line.
@@ -61,10 +77,16 @@ class FileUpload extends React.Component {
           ri = rs[rs.length - 1];   // get the report id row.
           delete rs[rs.length - 1]; // remove the report id row.
 
+          let report_id = ri["WorkedHours"]; // report id is on the same column of work hours.
+
           this.setState({
             file: file,
-            rows: rs,
-            report_id: ri['WorkedHours'],
+            rows: Object.keys(rs).map(key => {
+              rs[key]["Date"] = moment(rs[key]["Date"], 'DD/MM/YYYY').toDate();
+              rs[key]["ID"] = report_id;
+              return rs[key];
+            }), // convert Date column to date type.
+            report_id: report_id,
             err: null
           });
         });
@@ -76,7 +98,6 @@ class FileUpload extends React.Component {
 
   render() {
     let {rows, report_id, err} = this.state;
-    let $tableList = [];
     let $report_id, $err;
 
     if (report_id){
@@ -86,10 +107,6 @@ class FileUpload extends React.Component {
     if (err){
       $err = (<p><span className="error">{err}</span> </p>);
     }
-
-    $tableList = Object.keys(rows).map(key => {
-      return rows[key];
-    })
 
     return (
       <div className="previewComponent">
@@ -103,7 +120,7 @@ class FileUpload extends React.Component {
         </form>
         {$err}
         <div className="App-list">
-          <Table className="center" data={$tableList} sortable={true} filterable={['EmployeeID']}/>
+          <Table className="center" data={this.state.table_list} sortable={true} filterable={['EmployeeID']}/>
         </div>
         {$report_id}
       </div>
